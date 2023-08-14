@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node ./webserver.api.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+
+  "type": "module"
+}
