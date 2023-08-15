@@ -4,36 +4,50 @@ export class UNICUMIntranetLoginService {
             let username = req.body.username;
             let password = req.body.password;
 
+            console.log(`Trying to log you in ${username}`)
+
             const VALID_RESPONSE_MOCK = {
                 authentication: 'verified',
                 user: {
-                    name: 'Test User',
-                    nick: 'tuser',
-                    
+                    _id: 163,
+                    username: username,
+                    password: password,
+                    nickname: 'Teszt Elek',
+                    prefix: 'Dr.',
+                    language: '',
+                    privileges: '',
+                    GPF: '',
+                    time_preference: '',
+                    theme_preference: '',
                 }
+            }
+
+            const getAuthenticationFromDB = (username, password) => {
+                return new Promise((resolve) => {
+                    /* TODO: wire in DB */
+                    if (username === "test" && password === "123") {
+                        setTimeout(() => {
+                            resolve({ auth: 'valid' });
+                        }, 200);
+                    } else {
+                        resolve({ auth: 'invalid' });
+                    }
+                });
             }
 
             if (username && password) {
                 getAuthenticationFromDB(username, password).then((dbResponse) => {
                     if (dbResponse.auth === 'valid') {
+                        res.set('content-type', 'text/plain');
                         res.send(JSON.stringify(VALID_RESPONSE_MOCK));
                     } else {
+                        res.set('content-type', 'text/plain');
                         res.send('{"authentication": "failed"}')
                     }
                 })
-            }
-        });
-    }
-
-    getAuthenticationFromDB(username, password) {
-        return new Promise((resolve) => {
-            /* TODO: wire in DB */
-            if (username === "test" && password === "123") {
-                setTimeout(() => {
-                    resolve({ auth: 'valid' });
-                }, 200);
             } else {
-                resolve({ auth: 'invalid' });
+                res.set('content-type', 'text/plain');
+                res.send('{"authentication": "failed"}')
             }
         });
     }
