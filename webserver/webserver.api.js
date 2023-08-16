@@ -1,12 +1,14 @@
 import express from 'express';
 import { UNICUMIntranetLoginService } from './endpoints/login.endpoint.js';
 import cors from 'cors'
+import { WikiArticleEndpointService } from './endpoints/wiki-article.endpoint.js';
 
 const UnicumWebService = express();
 UnicumWebService.use(cors());
 UnicumWebService.use(express.json({ type: '*/*'}));
 /* Endpoint Service Instantiations */
 UNICUMIntranetLoginService.initLoginEndpoint(UnicumWebService);
+WikiArticleEndpointService.initLoginEndpoint(UnicumWebService);
 
 /* ROOT and basic API definitions */
 UnicumWebService.get('/', function (req, res) {
@@ -14,4 +16,4 @@ UnicumWebService.get('/', function (req, res) {
   res.send('API-at-home root')
 })
 
-UnicumWebService.listen(3000)
+UnicumWebService.listen(3000);

@@ -10,6 +10,7 @@ export class UNICUMIntranetLoginService {
                 authentication: 'verified',
                 user: {
                     _id: 163,
+                    uid: 1634,
                     username: username,
                     password: password,
                     nickname: 'Teszt Elek',
@@ -42,7 +43,7 @@ export class UNICUMIntranetLoginService {
                         res.send(JSON.stringify(VALID_RESPONSE_MOCK));
                     } else {
                         res.set('content-type', 'text/plain');
-                        res.send('{"authentication": "failed"}')
+                        res.send('{"authentication": "failed"}');
                     }
                 })
             } else {
