@@ -2,6 +2,7 @@ import express from 'express';
 import { UNICUMIntranetLoginService } from './endpoints/login.endpoint.js';
 import cors from 'cors'
 import { WikiArticleEndpointService } from './endpoints/wiki-article.endpoint.js';
+import { UserOperationsEndpointService } from './endpoints/user-operations.endpoint.js';
 
 const UnicumWebService = express();
 UnicumWebService.use(cors());
@@ -9,6 +10,7 @@ UnicumWebService.use(express.json({ type: '*/*'}));
 /* Endpoint Service Instantiations */
 UNICUMIntranetLoginService.initLoginEndpoint(UnicumWebService);
 WikiArticleEndpointService.initLoginEndpoint(UnicumWebService);
+UserOperationsEndpointService.initLoginEndpoint(UnicumWebService);
 
 /* ROOT and basic API definitions */
 UnicumWebService.get('/', function (req, res) {
