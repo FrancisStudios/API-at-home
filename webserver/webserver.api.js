@@ -9,8 +9,8 @@ UnicumWebService.use(cors());
 UnicumWebService.use(express.json({ type: '*/*'}));
 /* Endpoint Service Instantiations */
 UNICUMIntranetLoginService.initLoginEndpoint(UnicumWebService);
-WikiArticleEndpointService.initLoginEndpoint(UnicumWebService);
-UserOperationsEndpointService.initLoginEndpoint(UnicumWebService);
+WikiArticleEndpointService.initArticleEndpoint(UnicumWebService);
+UserOperationsEndpointService.initUserOperationsEndpoint(UnicumWebService);
 
 /* ROOT and basic API definitions */
 UnicumWebService.get('/', function (req, res) {

@@ -1,7 +1,7 @@
 import { SQLConnection } from "../database/database-connection.js";
 
 export class WikiArticleEndpointService {
-    static initLoginEndpoint(UnicumWebService) {
+    static initArticleEndpoint(UnicumWebService) {
         UnicumWebService.post('/article', function (req, res) {
             let searchquery = req.body.query;
 

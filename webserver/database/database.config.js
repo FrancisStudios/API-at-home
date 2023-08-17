@@ -2,7 +2,7 @@ const DBCONFIG = {
     host: 'localhost',
     user: 'unicumnet',
     password: 'testdb123',
-    database: 'unicum_intranet'
+    database: 'duegev-wiki-testdb'
 }
 
 export default DBCONFIG;
