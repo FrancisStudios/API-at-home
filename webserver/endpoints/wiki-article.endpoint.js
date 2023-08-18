@@ -11,7 +11,7 @@ export class WikiArticleEndpointService {
                 queryValidation: 'invalid',
                 articles: []
             }
-            
+
             const getArticlesFromDB = (searchquery) => {
                 return new Promise(resolve => {
                     let dbConnection = new SQLConnection();

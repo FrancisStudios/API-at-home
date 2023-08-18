@@ -2,7 +2,7 @@ import { SQLConnection } from "../database/database-connection.js";
 
 export class LabelsAndCategoriesEndpointService {
     static init(UnicumWebService) {
-        UnicumWebService.post('/user-ops', function (req, res) {
+        UnicumWebService.post('/article-labels', function (req, res) {
             console.log('user operations was called')
 
             let searchquery = req.body;
@@ -25,7 +25,25 @@ export class LabelsAndCategoriesEndpointService {
             }
 
             /* searchquery = {query: "category"} */
-            getAllSorter(searchquery.query)
+            getAllSorter(searchquery.query).then(sorterList => {
+                const VALID_RESPONSE = {
+                    queryValidation: 'valid',
+                    values: JSON.parse(JSON.stringify(sorterList.values))
+                }
+
+                const INVALID_RESPONSE = {
+                    queryValidation: 'invalid',
+                    values: []
+                }
+
+                if (sorterList.queryValidation && sorterList.queryValidation === 'valid') {
+                    res.set('content-type', 'text/plain');
+                    res.send(JSON.stringify(VALID_RESPONSE));
+                } else {
+                    res.set('content-type', 'text/plain');
+                    res.send(JSON.stringify(INVALID_RESPONSE));
+                }
+            });
         });
     }
 }
