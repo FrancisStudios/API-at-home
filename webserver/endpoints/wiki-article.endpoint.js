@@ -1,4 +1,5 @@
 import { SQLConnection } from "../database/database-connection.js";
+import  genericQueryExecutor  from "../utils/generic-query.execute.js";
 
 export class WikiArticleEndpointService {
     static initArticleEndpoint(UnicumWebService) {
@@ -11,20 +12,14 @@ export class WikiArticleEndpointService {
             }
 
             /* QUERY FUNCTIONS */
-            
+
+
             const queryAllArticles = () => {
-                return new Promise(resolve => {
-                    let dbConnection = new SQLConnection();
-                    try {
-                        dbConnection.makeQuery('SELECT * FROM articles').then((response) => {
-                            dbConnection.closeConnection();
-                            resolve({ queryValidation: 'valid', articles: response });
-                        });
-                    } catch (error) {
-                        resolve({ queryValidation: 'invalid' });
-                        throw error;
-                    }
-                });
+                return genericQueryExecutor('SELECT * FROM articles');
+            }
+
+            const queryLatestId = () => {
+                return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 0, 1');
             }
 
             const insertNewArticle = () => {
@@ -75,6 +70,23 @@ export class WikiArticleEndpointService {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',
                                 articles: []
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
+                    break;
+
+                case 'get-latest':
+                    console.log('Get latest article');
+                    queryLatestId().then((dbResponse) => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                articles: JSON.parse(JSON.stringify(dbResponse.articles))
                             }
                             res.set('content-type', 'text/plain');
                             res.send(JSON.stringify(VALID_RESPONSE));
