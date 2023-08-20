@@ -1,5 +1,5 @@
 import { SQLConnection } from "../database/database-connection.js";
-import  genericQueryExecutor  from "../utils/generic-query.execute.js";
+import genericQueryExecutor from "../utils/generic-query.execute.js";
 
 export class WikiArticleEndpointService {
     static initArticleEndpoint(UnicumWebService) {
@@ -23,24 +23,26 @@ export class WikiArticleEndpointService {
             }
 
             const insertNewArticle = () => {
-                let article = req.body.values;
-                if (article) {
-                    let articleObject = JSON.parse(article);
-                    let dbConnection = new SQLConnection();
-                    try {
-                        dbConnection.makeQuery(
-                            `INSERT INTO articles (_id, article_id, title, date, author, irl_date, labels, categories, document, likes) ` +
-                            `VALUES ('${articleObject._id}', '${articleObject.article_id}', '${articleObject.title}', '${articleObject.date}',` +
-                            `'${articleObject.author}', '${articleObject.irl_date}', '${articleObject.labels}', '${articleObject.categories}', , '[]')`
-                        ).then(() => {
-                            dbConnection.closeConnection();
-                            resolve({ queryValidation: 'valid' });
-                        });
-                    } catch (error) {
-                        resolve({ queryValidation: 'invalid' });
-                        throw error;
+                return new Promise(resolve => {
+                    let article = req.body.values;
+                    if (article) {
+                        let dbConnection = new SQLConnection();
+                        let articleObject = article;
+                        try {
+                            dbConnection.makeQuery(
+                                `INSERT INTO articles (_id, article_id, title, date, author, irl_date, labels, categories, document, likes) ` +
+                                `VALUES ('${articleObject._id}', '${articleObject.article_id}', '${articleObject.title}', '${articleObject.date}',` +
+                                `'${articleObject.author}', '${articleObject.irl_date}', '${JSON.stringify(articleObject.labels)}', '${JSON.stringify(articleObject.categories)}', '${articleObject.document}', '[]')`
+                            ).then(() => {
+                                dbConnection.closeConnection();
+                                resolve({ queryValidation: 'valid' });
+                            });
+                        } catch (error) {
+                            resolve({ queryValidation: 'invalid' });
+                            throw error;
+                        }
                     }
-                }
+                });
             }
 
             /* CARREFOUR */
@@ -66,6 +68,7 @@ export class WikiArticleEndpointService {
                 case 'insert':
                     console.log(`Trying to insert a new document`);
                     insertNewArticle().then((dbResponse) => {
+                        console.log('insert', dbResponse);
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',
