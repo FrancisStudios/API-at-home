@@ -6,7 +6,7 @@ const genericQueryExecutor = (SQL_EXPRESSION) => {
         try {
             dbConnection.makeQuery(SQL_EXPRESSION).then((response) => {
                 dbConnection.closeConnection();
-                resolve({ queryValidation: 'valid', articles: response });
+                resolve({ queryValidation: 'valid', values: response });
             });
         } catch (error) {
             resolve({ queryValidation: 'invalid' });
@@ -16,12 +16,3 @@ const genericQueryExecutor = (SQL_EXPRESSION) => {
 }
 
 export default genericQueryExecutor;
-
-
-/* 
-
-TODO:
-this is specific to article queryies, 
-worth extending to truely generic function
-
-*/

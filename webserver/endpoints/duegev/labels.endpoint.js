@@ -1,4 +1,4 @@
-import { SQLConnection } from "../database/database-connection.js";
+import { SQLConnection } from "../../database/database-connection.js";
 
 export class LabelsAndCategoriesEndpointService {
     static init(UnicumWebService) {

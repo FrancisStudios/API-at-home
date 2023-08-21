@@ -1,5 +1,6 @@
 import { SQLConnection } from "../database/database-connection.js";
 import genericQueryExecutor from "../utils/generic-query.execute.js";
+import sanitizeUserDefinedInput from "../utils/sanitize-user-input.util.js"
 
 export class WikiArticleEndpointService {
     static initArticleEndpoint(UnicumWebService) {
@@ -30,8 +31,8 @@ export class WikiArticleEndpointService {
                         let articleObject = article;
                         
                         /* CLEANSE DOCUMENT FROM SINGLE AND SOUBLE QUOTES FROM USER DEFINED FIELDS */
-                        articleObject.title = articleObject.title.replace(/'/g, "’").replace(/"/g, '’’');
-                        articleObject.document = articleObject.document.replace(/'/g, "’").replace(/"/g, '’’');
+                        articleObject.title = sanitizeUserDefinedInput(articleObject.title);
+                        articleObject.document = sanitizeUserDefinedInput(articleObject.document);
 
                         try {
                             dbConnection.makeQuery(
@@ -59,7 +60,7 @@ export class WikiArticleEndpointService {
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',
-                                articles: JSON.parse(JSON.stringify(dbResponse.articles))
+                                articles: JSON.parse(JSON.stringify(dbResponse.values))
                             }
                             res.set('content-type', 'text/plain');
                             res.send(JSON.stringify(VALID_RESPONSE));
@@ -94,7 +95,7 @@ export class WikiArticleEndpointService {
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',
-                                articles: JSON.parse(JSON.stringify(dbResponse.articles))
+                                articles: JSON.parse(JSON.stringify(dbResponse.values))
                             }
                             res.set('content-type', 'text/plain');
                             res.send(JSON.stringify(VALID_RESPONSE));

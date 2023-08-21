@@ -90,3 +90,42 @@ const VALID_RESPONSE = {
 - Insert new article. In this case the valid response **does not** contein an article field or the article field is an empty array. But it shouldn't bother the FE, since that field is unused in this scenario. We only wait for the **queryValidation**:'valid' to return to ensure user that data is saved.
 
 ---
+
+## 2. DUGEV WIKI ARTICLE LIKE ENDPOINT 👍
+
+**endpoint:** /article/like
+
+Valid request body:
+```
+ { 
+    query: {
+        credentials: {
+            username: string,
+            password: string,
+        }
+        action: 'add' | 'remove';
+        article_id: string
+    } 
+}
+```
+
+### Backend procedure:
+Backend should make a request to the DB authenticating the user, and if it's successful, procceed to execute the action **'add'** or **'remove'** which adds the UID to the list of likers.
+
+### VALID RESPONSE ✅
+```
+const VALID_RESPONSE = {
+    queryValidation: 'valid',
+    articles:[]
+}
+```
+
+### INVALID RESPONSE ❌
+```
+ const INVALID_RESPONSE = {
+    queryValidation: 'invalid',
+    articles: []
+}
+```
+
+---
