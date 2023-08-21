@@ -30,13 +30,8 @@ export class WikiArticleEndpointService {
                         let articleObject = article;
                         
                         /* CLEANSE DOCUMENT FROM SINGLE AND SOUBLE QUOTES FROM USER DEFINED FIELDS */
-                        /* TODO: look into this, this is not working*/
-                        articleObject.title = articleObject.title.replace("'", "`");
-                        articleObject.title = articleObject.title.replace('"', "``");
-
-                        articleObject.document = articleObject.document.replace("'", "`");
-                        articleObject.document = articleObject.document.replace('"', "``");
-
+                        articleObject.title = articleObject.title.replace(/'/g, "’").replace(/"/g, '’’');
+                        articleObject.document = articleObject.document.replace(/'/g, "’").replace(/"/g, '’’');
 
                         try {
                             dbConnection.makeQuery(
