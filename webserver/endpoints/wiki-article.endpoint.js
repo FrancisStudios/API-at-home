@@ -28,6 +28,16 @@ export class WikiArticleEndpointService {
                     if (article) {
                         let dbConnection = new SQLConnection();
                         let articleObject = article;
+                        
+                        /* CLEANSE DOCUMENT FROM SINGLE AND SOUBLE QUOTES FROM USER DEFINED FIELDS */
+                        /* TODO: look into this, this is not working*/
+                        articleObject.title = articleObject.title.replace("'", "`");
+                        articleObject.title = articleObject.title.replace('"', "``");
+
+                        articleObject.document = articleObject.document.replace("'", "`");
+                        articleObject.document = articleObject.document.replace('"', "``");
+
+
                         try {
                             dbConnection.makeQuery(
                                 `INSERT INTO articles (_id, article_id, title, date, author, irl_date, labels, categories, document, likes) ` +
