@@ -43,9 +43,23 @@ Both stack can decide about the actions by this authentication flag. Secondarily
 
 **endpoint:** /article
 
-Valid request body:
+Valid request bodies:
+
+For querying all (top 100 records) -> returns list of articles:
 ```
  { query: '*', ?values:<WikiArticle> }
+```
+For querying the latest record (with highest ID) usually used for logic purposes, but can be found on the homepage as the latest article:
+```
+ { query: 'get-latest', ?values:<WikiArticle> }
+```
+For getting an article by article_id field:
+```
+ { query: 'get-article-by-id', values:<string> article_id }
+```
+For inserting a new article into DB:
+```
+ { query: 'insert', values:<WikiArticle> }
 ```
 
 ### Fields:

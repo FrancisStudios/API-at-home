@@ -23,6 +23,10 @@ export class WikiArticleEndpointService {
                 return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 0, 1');
             }
 
+            const getArticleByID = (article_id) => {
+                return genericQueryExecutor(`SELECT * FROM articles WHERE article_id='${article_id}'`)
+            }
+
             const insertNewArticle = () => {
                 return new Promise(resolve => {
                     let article = req.body.values;
@@ -92,6 +96,26 @@ export class WikiArticleEndpointService {
                 case 'get-latest':
                     console.log('Get latest article');
                     queryLatestId().then((dbResponse) => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                articles: JSON.parse(JSON.stringify(dbResponse.values))
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
+                    break;
+                
+                case 'get-article-by-id':
+                    console.log('Get article by id');
+
+                    let article_id = req.body.values;
+
+                    getArticleByID(article_id).then((dbResponse)=>{
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',
