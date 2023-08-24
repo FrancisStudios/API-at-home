@@ -5,9 +5,40 @@
 **endpoint:** /login
 
 API receives the following object from the frontend auth service
+
+Valid request bodies:
+
+Simple login query containing the intent _(query: 'login')_ and the payload data as _values_
+
 ```
-{ username: "username", password: "password-hash"}
+ { query: 'login', values: { username: username, password: password }
 ```
+
+Username change intent:
+```
+{ 
+    query: 'change-username', 
+    values: { 
+        oldUsername: oldUsername, 
+        newUsername: newUsername, 
+        password: password 
+    } 
+}
+```
+
+Password change intent:
+```
+{ 
+    query: 'change-password', 
+    values: { 
+        username: username, 
+        oldPassword: oldPassword, 
+        newPassword: newPassword 
+    } 
+}
+```
+
+
 Backend matches credentials with the stored values. And responds with a valid or invalid response, both HTTP 200.
 
 ### VALID RESPONSE ✅

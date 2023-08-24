@@ -1,12 +1,12 @@
 import { SQLConnection } from "../database/database-connection.js";
+import genericQueryExecutor from "../utils/generic-query.execute.js";
+import sanitizeUserDefinedInput from "../utils/sanitize-user-input.util.js";
 
 export class UNICUMIntranetLoginService {
     static initLoginEndpoint(UnicumWebService) {
         UnicumWebService.post('/login', function (req, res) {
-            let username = req.body.username;
-            let password = req.body.password;
-
-            console.log(`Trying to log you in ${username}`);
+            let query = req.body.query;
+            let payload = req.body.values;
 
             const getAuthenticationFromDB = (username, password) => {
                 return new Promise((resolve) => {
@@ -15,7 +15,7 @@ export class UNICUMIntranetLoginService {
                     try {
                         dbConnection.makeQuery(`SELECT * FROM users WHERE username='${username}' AND password='${password}'`).then(USER_RESPONSE => {
                             dbConnection.closeConnection();
-                            
+
                             if (USER_RESPONSE.length === 1) {
                                 resolve({ auth: 'valid', user: USER_RESPONSE });
                             } else {
@@ -30,40 +30,57 @@ export class UNICUMIntranetLoginService {
                 });
             }
 
-            if (username && password) {
-                getAuthenticationFromDB(username, password).then((dbResponse) => {
-                    if (dbResponse.auth === 'valid') {
-                        let VALID_RESPONSE = {
-                            authentication: 'verified',
-                            user: {
-                                _id: dbResponse.user[0]._id,
-                                uid: dbResponse.user[0].uid,
-                                username: dbResponse.user[0].username,
-                                password: dbResponse.user[0].password,
-                                nickname: dbResponse.user[0].nickname,
-                                prefix: dbResponse.user[0].prefix,
-                                language: dbResponse.user[0].language,
-                                privileges: dbResponse.user[0].privileges,
-                                GPF: dbResponse.user[0].gpf,
-                                time_preference: dbResponse.user[0].time_preference,
-                                theme_preference: dbResponse.user[0].theme_preference,
+            /* CARREFOUR - Intent analysation*/
+
+            switch (query) {
+
+                /* SIMPLE LOGIN */
+                case 'login':
+                    if (payload.password && payload.username) {
+                        getAuthenticationFromDB(payload.username, payload.password).then(dbResponse => {
+                            if (dbResponse.auth === 'valid') {
+                                let VALID_RESPONSE = {
+                                    authentication: 'verified',
+                                    user: JSON.parse(JSON.stringify(dbResponse.user))[0]
+                                }
+                                console.log(`Login successful ${VALID_RESPONSE.user.username}`);
+                                res.set('content-type', 'text/plain');
+                                res.send(JSON.stringify(VALID_RESPONSE));
+                            } else {
+                                res.set('content-type', 'text/plain');
+                                res.send('{"authentication": "failed"}');
+                                console.log('Login declined!');
                             }
-                        }
-
-                        console.log('Login successful!');
-
-                        res.set('content-type', 'text/plain');
-                        res.send(JSON.stringify(VALID_RESPONSE));
+                        })
                     } else {
                         res.set('content-type', 'text/plain');
                         res.send('{"authentication": "failed"}');
                         console.log('Login declined!');
                     }
-                })
-            } else {
-                res.set('content-type', 'text/plain');
-                res.send('{"authentication": "failed"}');
-                console.log('Login declined!');
+
+                    break;
+
+                /* CHANGE CREDENTIALS */
+                case 'change-username':
+                    getAuthenticationFromDB(payload.oldUsername, payload.password).then(authentication => {
+                        if (authentication.auth === 'valid') {
+                            let newUsername = sanitizeUserDefinedInput(payload.newUsername);
+                            genericQueryExecutor(`UPDATE users SET username='${newUsername}' WHERE username='${payload.oldUsername}' AND password='${payload.password}'`)
+                                .then(dbResponse => {
+                                    if (dbResponse.queryValidation === 'valid') {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'valid' }));
+                                    } else {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                    }
+                                });
+                        }
+                    })
+                    break;
+
+                case 'change-password':
+                    break;
             }
         });
     }
