@@ -103,6 +103,32 @@ export class UNICUMIntranetLoginService {
                         }
                     });
                     break;
+
+                case 'change-preferences':
+                    getAuthenticationFromDB(payload.username, payload.password).then(authentication => {
+                        console.log(`User preference change request for ${payload.username}`);
+                        if (authentication.auth === 'valid') {
+
+                            let newNickname = sanitizeUserDefinedInput(payload.nickname);
+                            let newPrefix = sanitizeUserDefinedInput(payload.prefix);
+                            let newLanguage = sanitizeUserDefinedInput(payload.language);
+
+                            genericQueryExecutor(`UPDATE users SET nickname='${newNickname}', prefix='${newPrefix}', language='${newLanguage}' WHERE username='${payload.username}' AND password='${payload.password}'`)
+                                .then(dbResponse => {
+                                    if (dbResponse.queryValidation === 'valid') {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'valid' }));
+                                    } else {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                    }
+                                });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                        }
+                    });
+                    break;
             }
         });
     }
