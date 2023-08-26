@@ -75,11 +75,33 @@ export class UNICUMIntranetLoginService {
                                         res.send(JSON.stringify({ queryValidation: 'invalid' }));
                                     }
                                 });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
                         }
-                    })
+                    });
                     break;
 
                 case 'change-password':
+                    getAuthenticationFromDB(payload.username, payload.oldPassword).then(authentication => {
+                        console.log(`Password change request for ${payload.username}`);
+                        if (authentication.auth === 'valid') {
+                            let newPassword = sanitizeUserDefinedInput(payload.newPassword);
+                            genericQueryExecutor(`UPDATE users SET password='${newPassword}' WHERE username='${payload.username}' AND password='${payload.oldPassword}'`)
+                                .then(dbResponse => {
+                                    if (dbResponse.queryValidation === 'valid') {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'valid' }));
+                                    } else {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                    }
+                                });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                        }
+                    });
                     break;
             }
         });
