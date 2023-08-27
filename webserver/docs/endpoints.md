@@ -174,3 +174,52 @@ const VALID_RESPONSE = {
 ```
 
 ---
+
+## 2. DUGEV WIKI TIME ENDPOINT ⏰
+
+**endpoint:** /duegev-time
+
+Valid request body:
+```
+ {
+    query: string < 'get' | 'set' >,
+    values: {
+        uid: number,
+        password: string,
+        date: string ,
+    }
+}
+```
+
+### Purpose:
+This provides the game time to our players:
+
+- **get**: no auth needed, gets the date from the db
+- **set**: authentication is needed adds +1 years to date. Stores username and last modified date in DB, so one user can only modify the date once a day.
+
+### VALID RESPONSE ✅
+```
+const VALID_RESPONSE = {
+    queryValidation: 'valid',
+    values?: number /* only when GET */
+}
+```
+
+### INVALID RESPONSES ❌
+
+General error:
+```
+ const INVALID_RESPONSE = {
+    queryValidation: 'invalid',
+}
+```
+
+If the user already set the date that day:
+```
+ const INVALID_RESPONSE = {
+    queryValidation: 'invalid',
+    values: 'already_set'
+}
+```
+
+---
