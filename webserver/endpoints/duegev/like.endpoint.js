@@ -51,8 +51,10 @@ export class DuegevArticleLikeEndpointService {
                                         break;
                                 }
 
+                                let _numberOfLikers = _likersArray.length;
+
                                 _ArticleData.likes = JSON.stringify(_likersArray);
-                                const INSERT_INTO_ARTICLES_QUERY = `UPDATE articles SET likes='${_ArticleData.likes}' WHERE article_id='${_ArticleData.article_id}'`;
+                                const INSERT_INTO_ARTICLES_QUERY = `UPDATE articles SET likes='${_ArticleData.likes}', number_of_likes='${_numberOfLikers}' WHERE article_id='${_ArticleData.article_id}'`;
 
                                 genericQueryExecutor(INSERT_INTO_ARTICLES_QUERY).then(insertQueryResponse => {
                                     let response = JSON.stringify({ queryValidation: insertQueryResponse.queryValidation });
