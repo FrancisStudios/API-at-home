@@ -84,6 +84,10 @@ For querying the latest record (with highest ID) usually used for logic purposes
 ```
  { query: 'get-latest', ?values:<WikiArticle> }
 ```
+For getting the most liked article DESC LIMIT 1; use the following query word:
+```
+ { query: 'get-most-liked' }
+```
 For getting an article by article_id field:
 ```
  { query: 'get-article-by-id', values:<string> article_id }
@@ -138,7 +142,7 @@ const VALID_RESPONSE = {
 
 ## 2. DUGEV WIKI ARTICLE LIKE ENDPOINT 👍
 
-**endpoint:** /article/like
+**endpoint:** /article-like
 
 Valid request body:
 ```
