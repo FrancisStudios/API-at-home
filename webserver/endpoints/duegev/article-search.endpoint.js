@@ -1,4 +1,5 @@
 import genericQueryExecutor from "../../utils/generic-query.execute.js";
+import sanitizeUserDefinedInput from "../../utils/sanitize-user-input.util.js";
 
 export class ArticleSearchServerEndpoint {
     static init(UnicumWebService) {
@@ -25,12 +26,43 @@ export class ArticleSearchServerEndpoint {
                 } 
             */
             const search = () => {
+                return new Promise(resolve => {
 
+                    parameters.document = sanitizeUserDefinedInput(parameters.document);
+
+                    if (parameters.document && parameters.document !== '') {
+                        genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`).then(dbDocumentQuery => {
+                            if (dbDocumentQuery.queryValidation === 'valid') {
+                                resolve({ queryValidation: 'valid', values: dbDocumentQuery.values });
+                            } else resolve({ queryValidation: 'invalid' });
+                        });
+                    }
+
+                    /*
+                    queries = [
+                        genericQueryExecutor(),
+                        genericQueryExecutor(),
+                        genericQueryExecutor(),
+                        genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`)
+                    ]
+                    Promise.all(queries).then(dbCollection => {
+                        console.log('col: ', dbCollection);
+                        resolve(dbCollection);
+                    });
+                    */
+
+                });
             }
 
             switch (query) {
                 case 'search':
-                    search();
+                    search().then(searchQueriesResponse => {
+                        if (searchQueriesResponse.queryValidation === 'valid') {
+                            console.log(searchQueriesResponse);
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'valid', values: searchQueriesResponse.values }));
+                        } else _generalInvalidResponse();
+                    });
                     break;
 
                 default:
@@ -39,72 +71,4 @@ export class ArticleSearchServerEndpoint {
             }
         });
     }
-}
-
-/* */
-
-let _query = req.body.query;
-let _queryObject = req.body.values;
-
-const getDuegevTime = () => {
-    genericQueryExecutor("SELECT * FROM date").then(dbResponse => {
-        if (dbResponse.queryValidation === 'valid') {
-            res.set('content-type', 'text/plain');
-            let dateObject = JSON.parse(JSON.stringify(dbResponse)).values[0];
-            let date = dateObject.date;
-            res.send(JSON.stringify({ queryValidation: 'valid', values: date }));
-        } else {
-            res.set('content-type', 'text/plain');
-            res.send(JSON.stringify({ queryValidation: 'invalid' }));
-        }
-    });
-};
-
-const newYear = () => {
-
-    function fail() {
-        console.log('Date set failed!');
-        res.set('content-type', 'text/plain');
-        res.send(JSON.stringify({ queryValidation: 'invalid' }));
-    }
-
-    if (_queryObject) {
-        genericQueryExecutor(`SELECT * FROM users WHERE uid='${_queryObject.uid}' AND password='${_queryObject.password}'`).then(authentication => {
-            switch (authentication.queryValidation) {
-                case 'valid':
-                    genericQueryExecutor("SELECT * FROM date").then(dbResponse => {
-                        if (dbResponse.queryValidation === 'valid') {
-                            let dateObject = JSON.parse(JSON.stringify(dbResponse)).values[0];
-                            console.log(`Attempt to set new date: ${dateObject.date + 1}`);
-                            if (dateObject.last_modified !== _queryObject.date && dateObject.last_user !== _queryObject.uid) {
-                                genericQueryExecutor(`UPDATE date SET date='${dateObject.date + 1}', last_modified='${_queryObject.date}', last_user='${_queryObject.uid}' WHERE date='${dateObject.date}'`)
-                                    .then(dateSetResponse => {
-                                        if (dateSetResponse.queryValidation === 'valid') res.send(JSON.stringify({ queryValidation: 'valid' }));
-                                        else fail();
-                                    });
-                            } else {
-                                res.set('content-type', 'text/plain');
-                                res.send(JSON.stringify({ queryValidation: 'invalid', values: 'already_set' }));
-                            }
-
-                        } else fail();
-                    });
-                    break;
-
-                default:
-                    fail();
-                    break;
-            }
-        });
-    } else fail();
-}
-
-switch (_query) {
-    case 'get':
-        getDuegevTime();
-        break;
-
-    case 'set':
-        newYear();
-        break;
 }

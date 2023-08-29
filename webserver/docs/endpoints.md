@@ -140,7 +140,7 @@ const VALID_RESPONSE = {
 
 ---
 
-## 2. DUGEV WIKI ARTICLE LIKE ENDPOINT 👍
+## 3. DUGEV WIKI ARTICLE LIKE ENDPOINT 👍
 
 **endpoint:** /article-like
 
@@ -179,7 +179,7 @@ const VALID_RESPONSE = {
 
 ---
 
-## 2. DUGEV WIKI TIME ENDPOINT ⏰
+## 4. DUGEV WIKI TIME ENDPOINT ⏰
 
 **endpoint:** /duegev-time
 
@@ -226,4 +226,57 @@ If the user already set the date that day:
 }
 ```
 
+---
+## 5. DUGEV ARTICLE SEARCH ENDPOINT 🔎
+
+**endpoint:** /duegev-search
+
+Valid request body:
+```
+ {
+    query: string < 'search' >,
+    values: {
+        labels: string[],
+        categories: string[],
+        title: string,
+        document: string,
+    }
+}
+```
+
+### Values fields:
+- **labels**: string[] with all the labels user defined in their query
+- **categories**: string[] with all the category tags defined in the SQ.
+- **title**: string with the content to search in titles.
+- **document**: string (the default query searches in only the document content)
+
+### Example user-side search query:
+
+```
+" some generic text &labels[label1, label2] &categories[category1, category2] &in:title=blablabla "
+```
+
+delimiters are the & characters
+
+**Syntax :**
+- generic text only: searches in the document 
+- labels[]: accepts a list (without quote marks)
+- categories[]: accepts a list (without quote marks)
+- &in:title: accepts a search string to search in titles
+
+### VALID RESPONSE ✅
+```
+const VALID_RESPONSE = {
+    queryValidation: 'valid',
+    values: WikiArticle[]
+}
+```
+
+### INVALID RESPONSE ❌
+
+```
+ const INVALID_RESPONSE = {
+    queryValidation: 'invalid',
+}
+```
 ---

@@ -6,6 +6,7 @@ import { UserOperationsEndpointService } from './endpoints/user-operations.endpo
 import { LabelsAndCategoriesEndpointService } from './endpoints/duegev/labels.endpoint.js';
 import { DuegevArticleLikeEndpointService } from './endpoints/duegev/like.endpoint.js';
 import { TimeServerEndpointService } from './endpoints/duegev/time-server.endpoint.js';
+import { ArticleSearchServerEndpoint } from './endpoints/duegev/article-search.endpoint.js';
 
 const UnicumWebService = express();
 UnicumWebService.use(cors());
@@ -17,6 +18,7 @@ UserOperationsEndpointService.initUserOperationsEndpoint(UnicumWebService);
 LabelsAndCategoriesEndpointService.init(UnicumWebService);
 DuegevArticleLikeEndpointService.init(UnicumWebService);
 TimeServerEndpointService.init(UnicumWebService);
+ArticleSearchServerEndpoint.init(UnicumWebService);
 
 /* ROOT and basic API definitions */
 UnicumWebService.get('/', function (req, res) {
