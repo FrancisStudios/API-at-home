@@ -33,24 +33,23 @@ export class ArticleSearchServerEndpoint {
                     if (parameters.document && parameters.document !== '') {
                         genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`).then(dbDocumentQuery => {
                             if (dbDocumentQuery.queryValidation === 'valid') {
-                                resolve({ queryValidation: 'valid', values: dbDocumentQuery.values });
+
+                                let _finalDocuments = dbDocumentQuery.values;
+                                if (parameters.labels && parameters.labels.length > 0) _finalDocuments = _finalDocuments.filter(document => document.labels.includes(parameters.labels));
+                                if (parameters.categories && parameters.categories.length > 0) _finalDocuments = _finalDocuments.filter(document => document.categories.includes(parameters.categories));
+                                if (parameters.title && parameters.title !== '') _finalDocuments = _finalDocuments.filter(document => document.title.includes(parameters.title));
+
+                                resolve({ queryValidation: 'valid', values: _finalDocuments });
+
                             } else resolve({ queryValidation: 'invalid' });
                         });
+                    } else {
+                        /*
+                        * TODO FOR LATER: if users want to search an article without providing any general text only
+                        * categories, labels or title 
+                        */
+                        resolve({ queryValidation: 'invalid' });
                     }
-
-                    /*
-                    queries = [
-                        genericQueryExecutor(),
-                        genericQueryExecutor(),
-                        genericQueryExecutor(),
-                        genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`)
-                    ]
-                    Promise.all(queries).then(dbCollection => {
-                        console.log('col: ', dbCollection);
-                        resolve(dbCollection);
-                    });
-                    */
-
                 });
             }
 
@@ -58,7 +57,6 @@ export class ArticleSearchServerEndpoint {
                 case 'search':
                     search().then(searchQueriesResponse => {
                         if (searchQueriesResponse.queryValidation === 'valid') {
-                            console.log(searchQueriesResponse);
                             res.set('content-type', 'text/plain');
                             res.send(JSON.stringify({ queryValidation: 'valid', values: searchQueriesResponse.values }));
                         } else _generalInvalidResponse();
