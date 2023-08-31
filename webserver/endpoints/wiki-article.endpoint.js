@@ -19,6 +19,11 @@ export class WikiArticleEndpointService {
                 return genericQueryExecutor('SELECT * FROM articles');
             }
 
+            const getArticleByUID = () => {
+                let uid = req.body.values;
+                return genericQueryExecutor(`SELECT * FROM articles WHERE author='${uid}'`)
+            }
+
             const queryLatestId = () => {
                 return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 0, 1');
             }
@@ -98,7 +103,6 @@ export class WikiArticleEndpointService {
                     break;
 
                 case 'get-latest':
-                    console.log('Get latest article');
                     queryLatestId().then((dbResponse) => {
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
@@ -136,6 +140,22 @@ export class WikiArticleEndpointService {
 
                 case 'get-most-liked':
                     getMostLikedArticle().then((dbResponse) => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                articles: JSON.parse(JSON.stringify(dbResponse.values))
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
+                    break;
+
+                case 'get-by-uid':
+                    getArticleByUID().then((dbResponse) => {
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
                                 queryValidation: 'valid',

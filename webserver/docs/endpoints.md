@@ -97,6 +97,11 @@ For inserting a new article into DB:
  { query: 'insert', values:<WikiArticle> }
 ```
 
+For getting articles that belongs to a certain user use the get-by-uid
+```
+ { query: 'get-by-uid', values:<number>UID }
+```
+
 ### Fields:
 - query: when '*' it's an ENUM for top 100 records from DB (as all articles)
 - values: when query is 'insert' then values is an article object 
