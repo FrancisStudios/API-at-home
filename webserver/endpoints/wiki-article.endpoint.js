@@ -36,6 +36,22 @@ export class WikiArticleEndpointService {
                 return genericQueryExecutor(`SELECT * FROM articles ORDER BY number_of_likes DESC LIMIT 1`);
             }
 
+            const deleteSelectedArticle = (requestData) => {
+                return new Promise(resolve => {
+                    genericQueryExecutor(`SELECT * FROM users WHERE username='${requestData.credentials.username}' AND password='${requestData.credentials.password}'`).then(authResponse => {
+                        if (authResponse.queryValidation === 'valid') {
+                            genericQueryExecutor(`DELETE FROM articles WHERE article_id='${requestData.articleID}' AND author='${requestData.credentials.UID}'`).then(dbResponse => {
+                                if (dbResponse.queryValidation === 'valid') resolve({ queryValidation: 'valid' });
+                                else resolve({ queryValidation: 'invalid' });
+                            });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
+                });
+            }
+
             const insertNewArticle = () => {
                 return new Promise(resolve => {
                     let article = req.body.values;
@@ -169,6 +185,34 @@ export class WikiArticleEndpointService {
                         }
                     });
                     break;
+
+                case 'delete-article':
+                    let deleteRequestData = req.body.values;
+                    /* 
+                    TODO: register in documentation,
+                    data structure is:
+                    {
+                        articleID : 1,
+                        credentials : {
+                            username : 'blin',
+                            password : 'blin',
+                            UID: 1
+                        }
+                    }
+                    */
+                    deleteSelectedArticle(deleteRequestData).then(dbResponse => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                values: 'successful-delete'
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
             }
 
         });
