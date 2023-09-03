@@ -7,10 +7,12 @@ import { LabelsAndCategoriesEndpointService } from './endpoints/duegev/labels.en
 import { DuegevArticleLikeEndpointService } from './endpoints/duegev/like.endpoint.js';
 import { TimeServerEndpointService } from './endpoints/duegev/time-server.endpoint.js';
 import { ArticleSearchServerEndpoint } from './endpoints/duegev/article-search.endpoint.js';
+import { RoleServerEndpointService } from './endpoints/duegev/role-server.endpoint.js';
 
 const UnicumWebService = express();
 UnicumWebService.use(cors());
 UnicumWebService.use(express.json({ type: '*/*'}));
+
 /* Endpoint Service Instantiations */
 UNICUMIntranetLoginService.initLoginEndpoint(UnicumWebService);
 WikiArticleEndpointService.initArticleEndpoint(UnicumWebService);
@@ -19,11 +21,11 @@ LabelsAndCategoriesEndpointService.init(UnicumWebService);
 DuegevArticleLikeEndpointService.init(UnicumWebService);
 TimeServerEndpointService.init(UnicumWebService);
 ArticleSearchServerEndpoint.init(UnicumWebService);
+RoleServerEndpointService.init(UnicumWebService);
 
 /* ROOT and basic API definitions */
 UnicumWebService.get('/', function (req, res) {
-  //console.log("reguesting root")
   res.send('API-at-home root')
-})
+});
 
 UnicumWebService.listen(3000);
