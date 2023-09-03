@@ -285,3 +285,47 @@ const VALID_RESPONSE = {
 }
 ```
 ---
+
+## 6. DUGEV USER ROLES ENDPOINT 👥
+
+**endpoint:** /duegev-roles
+
+Valid request body:
+```
+{
+    query: 'get-roles' | 'set-roles'
+    values: {
+        username: string,
+        password: string
+        newRoles?: string[] // only when 'set-roles' query
+    }
+}
+```
+
+### Values fields:
+- **newRoles**: string[] contains all the previous and new roles for the specific users
+
+### VALID RESPONSES ✅
+
+#### get-roles
+```
+VALID_RESPONSE = {
+    queryValidation: 'valid',
+    values: <UserRoles>[]
+}
+```
+
+#### set-roles
+```
+VALID_RESPONSE = {
+    queryValidation: 'valid',
+    values: 'new roles set!'
+}
+```
+
+### INVALID RESPONSE ❌
+
+```
+ INVALID_RESPONSE = { queryValidation: 'invalid' }
+```
+---
