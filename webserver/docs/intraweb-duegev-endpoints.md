@@ -101,6 +101,21 @@ For getting articles that belongs to a certain user use the get-by-uid
 ```
  { query: 'get-by-uid', values:<number>UID }
 ```
+For deleting an article (use ```delete-article``` query command):
+```
+deleteQuery<ArticleSearchQueryType> = 
+{
+    query: 'delete-article',
+    values: {
+        articleID: article_id,
+        credentials: {
+            username: username,
+            password: password,
+            UID: UID
+        }
+    }
+}
+```
 
 ### Fields:
 - query: when '*' it's an ENUM for top 100 records from DB (as all articles)
