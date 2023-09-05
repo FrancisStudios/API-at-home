@@ -3,7 +3,7 @@ import { SQLConnection } from "../database/database-connection.js";
 export class UserOperationsEndpointService {
     static initUserOperationsEndpoint(UnicumWebService) {
         UnicumWebService.post('/user-ops', function (req, res) {
-            console.log('user operations was called')
+            console.log('user operations was called');
 
             let searchquery = req.body;
 
