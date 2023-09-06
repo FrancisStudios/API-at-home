@@ -117,6 +117,15 @@ deleteQuery<ArticleSearchQueryType> =
 }
 ```
 
+For updating an article **update-article**
+```
+deleteQuery<ArticleSearchQueryType> = 
+{
+    query: 'update-article',
+    values: <WikiArticle>
+}
+```
+
 ### Fields:
 - query: when '*' it's an ENUM for top 100 records from DB (as all articles)
 - values: when query is 'insert' then values is an article object 
@@ -138,11 +147,19 @@ export type WikiArticle = {
 ```
 
 
-### VALID RESPONSE ✅
+### VALID RESPONSES ✅
 ```
 const VALID_RESPONSE = {
     queryValidation: 'valid',
     articles: <WikiArticle>[]
+}
+```
+
+**DELETE** and **UPDATE** responses
+```
+VALID_RESPONSE = {
+    queryValidation: 'valid',
+    values: 'successful-delete' | 'successful-update'
 }
 ```
 

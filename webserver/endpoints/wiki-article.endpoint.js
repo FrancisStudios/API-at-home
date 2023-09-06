@@ -53,6 +53,10 @@ export class WikiArticleEndpointService {
                 });
             }
 
+            const UpdateArticle = (article) => {
+                return genericQueryExecutor(`UPDATE articles SET title='${article.title}', labels='.${article.labels}', categories='${article.categories}', document='${article.document}' WHERE article_id='${article.article_id}'`);
+            }
+
             const insertNewArticle = () => {
                 return new Promise(resolve => {
                     let article = req.body.values;
@@ -202,6 +206,24 @@ export class WikiArticleEndpointService {
                             res.send(JSON.stringify(INVALID_RESPONSE));
                         }
                     });
+                    break;
+
+                case 'update-article':
+                    let updateRequestData = req.body.values; // <WikiArticle>
+                    UpdateArticle(updateRequestData).then(dbResponse => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                values: 'successful-update'
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    });
+                    break;
             }
 
         });
