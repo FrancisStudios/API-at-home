@@ -54,7 +54,10 @@ export class WikiArticleEndpointService {
             }
 
             const UpdateArticle = (article) => {
-                return genericQueryExecutor(`UPDATE articles SET title='${article.title}', labels='.${article.labels}', categories='${article.categories}', document='${article.document}' WHERE article_id='${article.article_id}'`);
+                let labels = JSON.stringify(article.labels);
+                let categories = JSON.stringify(article.categories);
+
+                return genericQueryExecutor(`UPDATE articles SET title='${article.title}', labels='${labels}', categories='${categories}', document='${article.document}' WHERE article_id='${article.article_id}'`);
             }
 
             const insertNewArticle = () => {
