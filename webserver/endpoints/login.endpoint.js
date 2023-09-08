@@ -1,3 +1,4 @@
+import { json } from "express";
 import { SQLConnection } from "../database/database-connection.js";
 import genericQueryExecutor from "../utils/generic-query.execute.js";
 import sanitizeUserDefinedInput from "../utils/sanitize-user-input.util.js";
@@ -118,6 +119,37 @@ export class UNICUMIntranetLoginService {
                                     if (dbResponse.queryValidation === 'valid') {
                                         res.set('content-type', 'text/plain');
                                         res.send(JSON.stringify({ queryValidation: 'valid' }));
+                                    } else {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                    }
+                                });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                        }
+                    });
+                    break;
+
+                /*
+
+                TODO: documentation
+                TruncatedUserData = {
+                    username: string,
+                    prefix: string,
+                    nickname: string,
+                    uid: number,
+                    privileges: string[];
+                }
+                */
+                case 'get-truncated-ud':
+                    getAuthenticationFromDB(payload.username, payload.password).then(authentication => {
+                        if (authentication.auth === 'valid') {
+                            genericQueryExecutor(`SELECT username, prefix, nickname, uid, privileges FROM users`)
+                                .then(dbResponse => {
+                                    if (dbResponse.queryValidation === 'valid') {
+                                        res.set('content-type', 'text/plain');
+                                        res.send(JSON.stringify({ queryValidation: 'valid', values: JSON.parse(JSON.stringify(dbResponse.values)) }));
                                     } else {
                                         res.set('content-type', 'text/plain');
                                         res.send(JSON.stringify({ queryValidation: 'invalid' }));
