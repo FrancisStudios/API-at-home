@@ -10,7 +10,7 @@ CREATE DATABASE internetathome;
 -- CREATE USERS TABLE
 CREATE TABLE internetathome.users (
         _id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        uid int,
+        uid int UNIQUE,
         username varchar(255),
         password varchar(255),
         nickname varchar(255),

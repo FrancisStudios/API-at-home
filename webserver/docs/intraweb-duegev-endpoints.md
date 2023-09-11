@@ -37,11 +37,23 @@ Password change intent:
     } 
 }
 ```
+Get truncated user data query for account menu user editor
+```
+{ 
+    query: 'get-truncated-ud', 
+    values: { 
+        username: loggedInUser.username, 
+        password: loggedInUser.password 
+    } 
+}
+```
 
 
 Backend matches credentials with the stored values. And responds with a valid or invalid response, both HTTP 200.
 
-### VALID RESPONSE ✅
+### VALID RESPONSES ✅
+
+General good login returns authentication 'verified' and UserData object
 ```
 { 
     authentication: 'verified', 
@@ -58,6 +70,17 @@ Backend matches credentials with the stored values. And responds with a valid or
         time_preference: string | UserTimePreferences,
         theme_preference: string | UserThemePreferences,
     }
+}
+```
+
+Truncated user query endpoint returns as part of values
+```
+TruncatedUserData = {
+    username: string,
+    prefix: string,
+    nickname: string,
+    uid: number,
+    privileges: string[];
 }
 ```
 

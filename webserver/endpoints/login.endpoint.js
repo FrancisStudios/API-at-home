@@ -131,17 +131,6 @@ export class UNICUMIntranetLoginService {
                     });
                     break;
 
-                /*
-
-                TODO: documentation
-                TruncatedUserData = {
-                    username: string,
-                    prefix: string,
-                    nickname: string,
-                    uid: number,
-                    privileges: string[];
-                }
-                */
                 case 'get-truncated-ud':
                     getAuthenticationFromDB(payload.username, payload.password).then(authentication => {
                         if (authentication.auth === 'valid') {
@@ -155,6 +144,47 @@ export class UNICUMIntranetLoginService {
                                         res.send(JSON.stringify({ queryValidation: 'invalid' }));
                                     }
                                 });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                        }
+                    });
+                    break;
+                /* 
+                INBOUND QUERY: 
+                { 
+                    query: 'new-user', 
+                    values: { 
+                        username: username, 
+                        password: password, 
+                        initiatorUN: initiatorUN, 
+                        initiatorPW: initiatorPW 
+                    } 
+                }
+                OUTBOUND QUERY:
+
+                */
+                case 'new-user':
+                    getAuthenticationFromDB(payload.initiatorUN, payload.initiatorPW).then(authentication => {
+                        if (authentication.auth === 'valid') {
+                            genericQueryExecutor(`SELECT uid FROM users ORDER BY uid DESC LIMIT 1;`).then(biggestUID => {
+                                if (biggestUID.queryValidation === 'valid') {
+                                    let newUserUID = JSON.parse(JSON.stringify(biggestUID.values))[0].uid + 1;
+                                    let nickname = 'New User'; let prefix = 'rookie';
+                                    let buildNewUserQuery = `INSERT INTO users (uid, username, password, nickname, prefix, language, privileges)` +
+                                        `VALUES ('${newUserUID}', '${payload.username}', '${payload.password}', '${nickname}', '${prefix}', 'English', 'default')`;
+
+                                    genericQueryExecutor(buildNewUserQuery).then(dbResponse => {
+                                        if (dbResponse.queryValidation === 'valid') {
+                                            res.set('content-type', 'text/plain');
+                                            res.send(JSON.stringify({ queryValidation: 'valid', values: 'successful-user-creation' }));
+                                        } else {
+                                            res.set('content-type', 'text/plain');
+                                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                        }
+                                    });
+                                }
+                            });
                         } else {
                             res.set('content-type', 'text/plain');
                             res.send(JSON.stringify({ queryValidation: 'invalid' }));
