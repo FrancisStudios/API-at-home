@@ -105,6 +105,7 @@ export class UNICUMIntranetLoginService {
                     });
                     break;
 
+                /* CHANGE GENERIC USER PREFERENCES (nickname, prefix, language TODO:[time_preference, theme_preference]) */
                 case 'change-preferences':
                     getAuthenticationFromDB(payload.username, payload.password).then(authentication => {
                         console.log(`User preference change request for ${payload.username}`);
@@ -131,6 +132,42 @@ export class UNICUMIntranetLoginService {
                     });
                     break;
 
+                /* CHANGE USER ROLES */
+                /*
+                {
+                    query: 'change-roles'
+                    values: {
+                        target: {
+                            uid: number,
+                            newRoleset: string[]
+                        },
+                        credentials: {
+                            username: string,
+                            password: string
+                        }
+                    }
+                }
+                */
+                case 'change-roles':
+                    getAuthenticationFromDB(payload.credentials.username, payload.credentials.password).then(authentication => {
+                        if (authentication.auth === 'valid') {
+                            genericQueryExecutor(`UPDATE users SET privileges='${JSON.stringify(payload.target.newRoleset)}' WHERE uid='${payload.target.uid}'`).then(dbResponse => {
+                                if (dbResponse.queryValidation === 'valid') {
+                                    res.set('content-type', 'text/plain');
+                                    res.send(JSON.stringify({ queryValidation: 'valid', values: JSON.parse(JSON.stringify(payload.target.newRoleset)) }));
+                                } else {
+                                    res.set('content-type', 'text/plain');
+                                    res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                                }
+                            });
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify({ queryValidation: 'invalid' }));
+                        }
+                    });
+                    break;
+
+                /* GETS USER IDENTIFIERS AND ROLES */
                 case 'get-truncated-ud':
                     getAuthenticationFromDB(payload.username, payload.password).then(authentication => {
                         if (authentication.auth === 'valid') {
