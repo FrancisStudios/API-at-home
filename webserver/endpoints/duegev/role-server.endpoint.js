@@ -35,6 +35,10 @@ export class RoleServerEndpointService {
                     });
                     break;
 
+                /* 
+                * SUDO role manager is in login.endpoint
+                * this is a different method here...
+                */
                 case 'set-roles':
 
                     let newRolesArray = values.newRoles.map(role => {
