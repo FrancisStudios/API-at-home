@@ -133,7 +133,7 @@ export class UNICUMIntranetLoginService {
                     break;
 
                 /* CHANGE USER ROLES */
-                /*
+                /* ALREADY DOCUMENTED
                 {
                     query: 'change-roles'
                     values: {
@@ -187,20 +187,7 @@ export class UNICUMIntranetLoginService {
                         }
                     });
                     break;
-                /* 
-                INBOUND QUERY: 
-                { 
-                    query: 'new-user', 
-                    values: { 
-                        username: username, 
-                        password: password, 
-                        initiatorUN: initiatorUN, 
-                        initiatorPW: initiatorPW 
-                    } 
-                }
-                OUTBOUND QUERY:
-
-                */
+                    
                 case 'new-user':
                     getAuthenticationFromDB(payload.initiatorUN, payload.initiatorPW).then(authentication => {
                         if (authentication.auth === 'valid') {

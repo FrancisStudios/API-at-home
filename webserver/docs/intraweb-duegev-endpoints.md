@@ -37,7 +37,25 @@ Password change intent:
     } 
 }
 ```
-Get truncated user data query for account menu user editor
+User roles and privileges change intent:
+```
+{
+    query: 'change-roles'
+    values: {
+        target: {
+            uid: number,
+            newRoleset: string[]
+        },
+        credentials: {
+            username: string,
+            password: string
+        }
+    }
+}
+```
+This intent can be only sent from a **sudo** user. In the ``newRoleset:string[]`` there should be all the new roles listed for a specific user, along with the UID. Credentials hold the sudo user creds.
+
+Get truncated user data query for account menu user editor:
 ```
 { 
     query: 'get-truncated-ud', 
@@ -47,7 +65,19 @@ Get truncated user data query for account menu user editor
     } 
 }
 ```
-
+New user (user creation) intent:
+```
+{ 
+    query: 'new-user', 
+    values: { 
+        username: username, 
+        password: password, 
+        initiatorUN: initiatorUN, 
+        initiatorPW: initiatorPW 
+    } 
+}
+```
+Where ``initiatorUN`` and ``initiatorPW`` is the **recruiter** user who initiated the new user creation, and username and password fields are belonging to the newly established user account. 
 
 Backend matches credentials with the stored values. And responds with a valid or invalid response, both HTTP 200.
 
@@ -83,10 +113,33 @@ TruncatedUserData = {
     privileges: string[];
 }
 ```
-
-### INVALID RESPONSE ❌
+Change roles valid response
 ```
-{"authentication": "failed"}
+{
+    queryValidation: 'valid',
+    values: newRoles[] as string
+}
+```
+
+New user created valid response
+
+```
+{ 
+    queryValidation: 'valid', 
+    values: 'successful-user-creation' 
+}
+```
+
+### INVALID RESPONSES ❌
+
+For general authentication
+```
+{authentication: 'failed'}
+```
+
+Every other sub-endpoint:
+```
+{ queryValidation: 'invalid' }
 ```
 
 Both stack can decide about the actions by this authentication flag. Secondarily we have to check the integrity of the user object IF verified.
