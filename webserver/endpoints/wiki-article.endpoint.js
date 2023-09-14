@@ -16,7 +16,7 @@ export class WikiArticleEndpointService {
 
 
             const queryAllArticles = () => {
-                return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC');
+                return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 200;');
             }
 
             const getArticleByUID = () => {
@@ -226,6 +226,24 @@ export class WikiArticleEndpointService {
                             res.send(JSON.stringify(INVALID_RESPONSE));
                         }
                     });
+                    break;
+
+                case 'fetch-next-chunk':
+                    let nextChunkQuery = `SELECT * FROM articles` +
+                        `WHERE _id > '${req.body.values.last_id}' ORDER BY _id DESC LIMIT 200;`;
+                    genericQueryExecutor(nextChunkQuery).then(dbResponse => {
+                        if (dbResponse.queryValidation === 'valid') {
+                            const VALID_RESPONSE = {
+                                queryValidation: 'valid',
+                                articles: JSON.parse(JSON.stringify(dbResponse.values))
+                            }
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(VALID_RESPONSE));
+                        } else {
+                            res.set('content-type', 'text/plain');
+                            res.send(JSON.stringify(INVALID_RESPONSE));
+                        }
+                    })
                     break;
             }
 

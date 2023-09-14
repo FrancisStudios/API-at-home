@@ -202,6 +202,11 @@ deleteQuery<ArticleSearchQueryType> =
 }
 ```
 
+For fetching next 200 articles ordered by _id (pagination in duegev browse page)
+```
+ { query: 'fetch-next-chunk', values:<WikiArticle>[] }
+```
+
 ### Fields:
 - query: when '*' it's an ENUM for top 100 records from DB (as all articles)
 - values: when query is 'insert' then values is an article object 
