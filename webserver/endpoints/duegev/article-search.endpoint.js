@@ -31,18 +31,22 @@ export class ArticleSearchServerEndpoint {
                     parameters.document = sanitizeUserDefinedInput(parameters.document);
 
                     if (parameters.document && parameters.document !== '') {
-                        genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`).then(dbDocumentQuery => {
-                            if (dbDocumentQuery.queryValidation === 'valid') {
+                        if (parameters.document !== '*') {
+                            genericQueryExecutor(`SELECT * FROM articles WHERE document LIKE '%${parameters.document}%';`).then(dbDocumentQuery => {
+                                if (dbDocumentQuery.queryValidation === 'valid') {
 
-                                let _finalDocuments = dbDocumentQuery.values;
-                                if (parameters.labels && parameters.labels.length > 0) _finalDocuments = _finalDocuments.filter(document => document.labels.includes(parameters.labels));
-                                if (parameters.categories && parameters.categories.length > 0) _finalDocuments = _finalDocuments.filter(document => document.categories.includes(parameters.categories));
-                                if (parameters.title && parameters.title !== '') _finalDocuments = _finalDocuments.filter(document => document.title.includes(parameters.title));
+                                    let _finalDocuments = dbDocumentQuery.values;
+                                    if (parameters.labels && parameters.labels.length > 0) _finalDocuments = _finalDocuments.filter(document => document.labels.includes(parameters.labels));
+                                    if (parameters.categories && parameters.categories.length > 0) _finalDocuments = _finalDocuments.filter(document => document.categories.includes(parameters.categories));
+                                    if (parameters.title && parameters.title !== '') _finalDocuments = _finalDocuments.filter(document => document.title.includes(parameters.title));
 
-                                resolve({ queryValidation: 'valid', values: _finalDocuments });
+                                    resolve({ queryValidation: 'valid', values: _finalDocuments });
 
-                            } else resolve({ queryValidation: 'invalid' });
-                        });
+                                } else resolve({ queryValidation: 'invalid' });
+                            });
+                        } else if (parameters.document === '*') {
+                            /* IF DOCUMENT == * then query by labels, categories, or title, what comes first in lin*/
+                        }
                     } else {
                         /*
                         * TODO FOR LATER: if users want to search an article without providing any general text only
