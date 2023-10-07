@@ -32,7 +32,7 @@ INSERT INTO users (uid, username, password, nickname, prefix, language)
 VALUES (3, 'yoachim', 'abc', 'Yoachim' ,'CEO', 'English');
 
 INSERT INTO users (uid, username, password, nickname, prefix, language)
-VALUES (3, 'blin', '123', 'Borislav' ,'King', 'English');
+VALUES (4, 'blin', '123', 'Borislav' ,'King', 'English');
 
 -- CREATE LABELS TABLE
 CREATE TABLE internetathome.labels (
