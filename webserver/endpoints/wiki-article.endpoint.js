@@ -16,7 +16,7 @@ export class WikiArticleEndpointService {
 
 
             const queryAllArticles = () => {
-                return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 200;');
+                return genericQueryExecutor('SELECT * FROM articles ORDER BY _id DESC LIMIT 100;');
             }
 
             const getArticleByUID = () => {
@@ -230,7 +230,7 @@ export class WikiArticleEndpointService {
 
                 case 'fetch-next-chunk':
                     let nextChunkQuery = `SELECT * FROM articles` +
-                        `WHERE _id > '${req.body.values.last_id}' ORDER BY _id DESC LIMIT 200;`;
+                        ` WHERE _id > '${req.body.values.last_id}' ORDER BY _id DESC LIMIT 100;`;
                     genericQueryExecutor(nextChunkQuery).then(dbResponse => {
                         if (dbResponse.queryValidation === 'valid') {
                             const VALID_RESPONSE = {
