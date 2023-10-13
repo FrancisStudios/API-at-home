@@ -80,4 +80,18 @@ CREATE TABLE internetathome.articles (
         number_of_likes int
 );
 
-INSERT INTO `articles` (`article_id`, `title`, `date`, `author`, `irl_date`, `labels`, `categories`, `document`, `likes`, `number_of_likes`) VALUES ('article_1', 'An article by Yehem', '2445', '1', '2023.9.7', '[\"labello\",\"uwu\"]', '[\"categorio\",\"that\",\"this\"]', '#This is the first working document innit?\r\n\r\nI wonder if this will work or nah', '[]', 0)
+INSERT INTO `articles` (`article_id`, `title`, `date`, `author`, `irl_date`, `labels`, `categories`, `document`, `likes`, `number_of_likes`) VALUES ('article_1', 'An article by Yehem', '2445', '1', '2023.9.7', '[\"labello\",\"uwu\"]', '[\"categorio\",\"that\",\"this\"]', '#This is the first working document innit?\r\n\r\nI wonder if this will work or nah', '[]', 0);
+
+-- CREATE MAP STORE
+
+CREATE TABLE internetathome.map (
+        filename text,
+        description text,
+        game_date int,
+        irl_date text,
+        updater int,
+        gpr text, 
+);
+
+INSERT INTO `map` (filename, description, game_date, irl_date, updater, gpr) VALUES ('not_specified', 'An uploaded map of the duegev world', 2446, '2023.10.12', 1, 'gpr');
+
