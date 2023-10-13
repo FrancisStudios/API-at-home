@@ -83,7 +83,6 @@ CREATE TABLE internetathome.articles (
 INSERT INTO `articles` (`article_id`, `title`, `date`, `author`, `irl_date`, `labels`, `categories`, `document`, `likes`, `number_of_likes`) VALUES ('article_1', 'An article by Yehem', '2445', '1', '2023.9.7', '[\"labello\",\"uwu\"]', '[\"categorio\",\"that\",\"this\"]', '#This is the first working document innit?\r\n\r\nI wonder if this will work or nah', '[]', 0);
 
 -- CREATE MAP STORE
-
 CREATE TABLE internetathome.map (
         filename text,
         description text,
